@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
+import { useUser, useClerk } from '@clerk/clerk-react';
 
-const Navbar = ({ currentPage, setCurrentPage, isLoggedIn, setIsLoggedIn }) => {
+const Navbar = ({ currentPage, setCurrentPage, isLoggedIn }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user } = useUser();
+  const { signOut } = useClerk();
+
+  const handleSignOut = () => {
+    signOut();
+  };
 
   // All pages including the new "Upload Data"
   const pages = [
@@ -44,12 +51,17 @@ const Navbar = ({ currentPage, setCurrentPage, isLoggedIn, setIsLoggedIn }) => {
             
             <div className="flex items-center space-x-3 ml-auto">
               {isLoggedIn ? (
-                <button
-                  onClick={() => setIsLoggedIn(false)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
-                >
-                  Logout
-                </button>
+                <div className="flex items-center space-x-3">
+                  <span className="text-sm text-gray-700">
+                    Welcome, {user?.firstName || user?.emailAddresses[0]?.emailAddress}
+                  </span>
+                  <button
+                    onClick={handleSignOut}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
+                  >
+                    Logout
+                  </button>
+                </div>
               ) : (
                 <>
                   <button
@@ -59,7 +71,7 @@ const Navbar = ({ currentPage, setCurrentPage, isLoggedIn, setIsLoggedIn }) => {
                     Login
                   </button>
                   <button
-                    onClick={() => setCurrentPage('signup')}
+                    onClick={() => setCurrentPage('login')}
                     className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
                   >
                     Sign Up
@@ -98,12 +110,17 @@ const Navbar = ({ currentPage, setCurrentPage, isLoggedIn, setIsLoggedIn }) => {
             
             <div className="flex items-center space-x-3 pt-3 border-t border-gray-200 mt-2">
               {isLoggedIn ? (
-                <button
-                  onClick={() => { setIsLoggedIn(false); setMenuOpen(false); }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded text-sm"
-                >
-                  Logout
-                </button>
+                <div className="flex flex-col space-y-2 w-full">
+                  <span className="text-sm text-gray-700">
+                    Welcome, {user?.firstName || user?.emailAddresses[0]?.emailAddress}
+                  </span>
+                  <button
+                    onClick={() => { handleSignOut(); setMenuOpen(false); }}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded text-sm"
+                  >
+                    Logout
+                  </button>
+                </div>
               ) : (
                 <>
                   <button
@@ -113,7 +130,7 @@ const Navbar = ({ currentPage, setCurrentPage, isLoggedIn, setIsLoggedIn }) => {
                     Login
                   </button>
                   <button
-                    onClick={() => { setCurrentPage('signup'); setMenuOpen(false); }}
+                    onClick={() => { setCurrentPage('login'); setMenuOpen(false); }}
                     className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded text-sm"
                   >
                     Sign Up
